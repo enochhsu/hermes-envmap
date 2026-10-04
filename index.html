@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Hermes environment map — H1</title>
+<style>
+:root{
+  --bg:#0b0f14; --panel:#121821; --panel2:#0f151d; --line:#1e2833;
+  --fg:#dfe7ef; --dim:#8b98a8; --ok:#2fbf71; --warn:#e0a13a;
+  --fail:#ef5350; --unk:#5b6878; --accent:#4f9df7;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  padding:18px 14px 60px;-webkit-text-size-adjust:100%}
+.wrap{max-width:1100px;margin:0 auto}
+h1{font-size:19px;margin:0 0 2px;letter-spacing:-.2px}
+.sub{color:var(--dim);font-size:13px;margin-bottom:16px}
+.pillrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}
+.pill{border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;
+  letter-spacing:.4px;border:1px solid transparent}
+.pill.ok{background:rgba(47,191,113,.14);color:var(--ok);border-color:rgba(47,191,113,.4)}
+.pill.warn{background:rgba(224,161,58,.14);color:var(--warn);border-color:rgba(224,161,58,.45)}
+.pill.fail{background:rgba(239,83,80,.14);color:var(--fail);border-color:rgba(239,83,80,.45)}
+.pill.unknown{background:rgba(91,104,120,.15);color:var(--unk);border-color:rgba(91,104,120,.45)}
+.counts{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--dim);margin:10px 0 18px}
+.counts b{color:var(--fg)}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.9px;color:var(--dim);
+  margin:26px 0 10px;font-weight:700}
+.atts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.att{background:var(--panel);border:1px solid var(--line);border-left-width:3px;
+  border-radius:8px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+.att.fail{border-left-color:var(--fail)}
+.att.warn{border-left-color:var(--warn)}
+.att-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex:0 0 8px}
+.att.fail .att-dot{background:var(--fail)}
+.att.warn .att-dot{background:var(--warn)}
+.att-body{display:flex;flex-direction:column;gap:2px;min-width:0}
+.att-layer{color:var(--dim);font-weight:400;font-size:12px;margin-left:6px}
+.att-det{color:var(--dim);font-size:12.5px;word-break:break-word}
+.allgood{color:var(--ok);font-size:13.5px;margin:0;background:var(--panel);
+  border:1px solid var(--line);border-left:3px solid var(--ok);border-radius:8px;padding:10px 12px}
+.spine{position:relative;padding-left:18px}
+.spine:before{content:"";position:absolute;left:6px;top:8px;bottom:8px;width:2px;
+  background:linear-gradient(180deg,rgba(79,157,247,.5),rgba(79,157,247,.08))}
+.layer{position:relative;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;padding:12px;margin-bottom:12px}
+.layer:before{content:"";position:absolute;left:-14px;top:22px;width:12px;height:2px;
+  background:rgba(79,157,247,.45)}
+.layer.fail{border-color:rgba(239,83,80,.45)}
+.layer.warn{border-color:rgba(224,161,58,.4)}
+.rail{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin-bottom:10px;
+  padding-bottom:9px;border-bottom:1px dashed var(--line)}
+.rail-idx{background:var(--panel2);border:1px solid var(--line);color:var(--dim);
+  border-radius:6px;font-size:11px;font-weight:700;padding:1px 7px}
+.rail-name{font-weight:700;font-size:14.5px}
+.rail-sub{color:var(--dim);font-size:12.5px;flex:1 1 200px;min-width:0}
+.rail-state{font-size:11.5px;font-weight:700;letter-spacing:.5px;color:var(--dim)}
+.layer.ok .rail-state{color:var(--ok)}
+.layer.warn .rail-state{color:var(--warn)}
+.layer.fail .rail-state{color:var(--fail)}
+.chips{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.chip{background:var(--panel2);border:1px solid var(--line);border-left-width:3px;
+  border-radius:8px;padding:9px 10px;min-width:0}
+.chip.ok{border-left-color:var(--ok)}
+.chip.warn{border-left-color:var(--warn)}
+.chip.fail{border-left-color:var(--fail)}
+.chip.unknown{border-left-color:var(--unk)}
+.chip-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.chip-name{font-weight:600;font-size:13.5px;word-break:break-word}
+.chip-state{font-size:12px;font-weight:700}
+.chip.ok .chip-state{color:var(--ok)}
+.chip.warn .chip-state{color:var(--warn)}
+.chip.fail .chip-state{color:var(--fail)}
+.chip.unknown .chip-state{color:var(--unk)}
+.chip-det{color:var(--dim);font-size:12.5px;margin-top:3px;word-break:break-word}
+.chip-kind{color:#5f6d7d;font-size:11px;margin-top:5px;font-family:ui-monospace,Menlo,monospace}
+.chip-priv{margin-top:6px;padding:6px 7px;background:#0a0e13;border:1px dashed var(--line);
+  border-radius:6px;color:#6f7d8d;font-size:11px;font-family:ui-monospace,Menlo,monospace;
+  white-space:pre-wrap;word-break:break-word}
+.legend{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:12px;margin-top:8px}
+.lgs{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:10px}
+.lg{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--dim)}
+.sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+.sw.ok{background:var(--ok)} .sw.warn{background:var(--warn)}
+.sw.fail{background:var(--fail)} .sw.unknown{background:var(--unk)}
+.kinds{margin:0;padding-left:18px;color:var(--dim);font-size:12.5px}
+.kinds code{color:var(--accent);background:var(--panel2);padding:1px 5px;border-radius:4px;
+  font-size:11.5px}
+footer{color:#5f6d7d;font-size:12px;margin-top:22px;border-top:1px solid var(--line);
+  padding-top:12px}
+@media(max-width:560px){
+  body{padding:14px 10px 50px}
+  .spine{padding-left:12px}
+  .layer:before{left:-10px;width:8px}
+  .chips{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Hermes environment map — H1</h1>
+  <div class="sub">Generated Sun 04 Oct 2026, 12:24 HKT · 9 layers · 34 modules</div>
+
+  <div class="pillrow">
+    <span class="pill fail">OVERALL: DOWN</span>
+  </div>
+  <div class="counts">
+    <span><b>30</b> ok</span><span><b>3</b> degraded</span>
+    <span><b>1</b> down</span><span><b>0</b> unknown</span>
+  </div>
+
+  <h2>Needs attention</h2>
+  <ul class="atts"><li class="att fail"><span class="att-dot"></span><span class="att-body"><b>Job fleet</b> <span class="att-layer">Scheduled jobs</span><span class="att-det">39 enabled of 48 scheduled; 2 erroring (most recent failing run 3h ago)</span></span></li></ul>
+
+  <h2>Module map</h2>
+  <div class="spine"><section class="layer ok"><div class="rail"><div class="rail-idx">1</div><div class="rail-name">Gateway &amp; runtime</div><div class="rail-sub">service, heartbeat, lifecycle, session store</div><div class="rail-state">✓ OK</div></div><div class="chips"><div class="chip ok" title="local service, port or process state"><div class="chip-top"><span class="chip-name">Gateway service</span><span class="chip-state">✓</span></div><div class="chip-det">systemd user unit active (pid 341)</div><div class="chip-kind">probe: process</div></div><div class="chip ok" title="local file/import check, no network involved"><div class="chip-top"><span class="chip-name">Heartbeat</span><span class="chip-state">✓</span></div><div class="chip-det">beat 17s ago, rss 762.1MB</div><div class="chip-kind">probe: local</div></div><div class="chip ok" title="local file/import check, no network involved"><div class="chip-top"><span class="chip-name">Lifecycle</span><span class="chip-state">✓</span></div><div class="chip-det">phase running since 2026-10-03 08:15 UTC</div><div class="chip-kind">probe: local</div></div></div></section><section class="layer ok"><div class="rail"><div class="rail-idx">2</div><div class="rail-name">Delivery channels</div><div class="rail-sub">inbound/outbound messaging surfaces</div><div class="rail-state">✓ OK</div></div><div class="chips"><div class="chip ok" title="configuration present; behaviour not exercised"><div class="chip-top"><span class="chip-name">Slack</span><span class="chip-state">✓</span></div><div class="chip-det">configured (config platforms.slack + bot token); gateway running</div><div class="chip-kind">probe: config</div></div><div class="chip ok" title="configuration present; behaviour not exercised"><div class="chip-top"><span class="chip-name">Telegram</span><span class="chip-state">✓</span></div><div class="chip-det">configured (bot token + app token); gateway running</div><div class="chip-kind">probe: config</div></div><div class="chip ok" title="configuration present; behaviour not exercised"><div class="chip-top"><span class="chip-name">WhatsApp</span><span class="chip-state">✓</span></div><div class="chip-det">configured (WHATSAPP_ENABLED present); gateway running</div><div class="chip-kind">probe: config</div></div></div></section><section class="layer ok"><div class="rail"><div class="rail-idx">3</div><div class="rail-name">Model lanes</div><div class="rail-sub">primary, fallback chain, auxiliary models</div><div class="rail-state">✓ OK</div></div><div class="chips"><div class="chip ok" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">Primary</span><span class="chip-state">✓</span></div><div class="chip-det">opencode-go deepseek-v4.1-flash — GET /models 200 — endpoint+auth verified</div><div class="chip-kind">probe: functional</div></div><div class="chip ok" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">Fallback 1</span><span class="chip-state">✓</span></div><div class="chip-det">opencode-zen deepseek-v4.1-flash — GET /models 200 — endpoint+auth verified</div><div class="chip-kind">probe: functional</div></div><div class="chip ok" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">Fallback 2</span><span class="chip-state">✓</span></div><div class="chip-det">commandcode deepseek/deepseek-v4.1-flash — GET /models 200 — endpoint+auth verified</div><div class="chip-kind">probe: functional</div></div><div class="chip ok" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">Vision (aux)</span><span class="chip-state">✓</span></div><div class="chip-det">openrouter qwen/qwen3-vl-235b-a22b-instruct — GET /models 200 — endpoint+auth verified</div><div class="chip-kind">probe: functional</div></div><div class="chip ok" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">Compression (aux)</span><span class="chip-state">✓</span></div><div class="chip-det">commandcode deepseek/deepseek-v4.1-flash — GET /models 200 — endpoint+auth verified</div><div class="chip-kind">probe: functional</div></div><div class="chip ok" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">Title gen (aux)</span><span class="chip-state">✓</span></div><div class="chip-det">opencode-zen deepseek-v4.1-flash — GET /models 200 — endpoint+auth verified</div><div class="chip-kind">probe: functional</div></div></div></section><section class="layer warn"><div class="rail"><div class="rail-idx">4</div><div class="rail-name">MCP servers</div><div class="rail-sub">tool providers attached to the agent</div><div class="rail-state">! DEGRADED</div></div><div class="chips"><div class="chip ok" title="endpoint/handshake reachable — auth or behaviour NOT proven"><div class="chip-top"><span class="chip-name">slides</span><span class="chip-state">✓</span></div><div class="chip-det">MCP handshake OK, 4 tools</div><div class="chip-kind">probe: connect</div></div><div class="chip ok" title="endpoint/handshake reachable — auth or behaviour NOT proven"><div class="chip-top"><span class="chip-name">workflowy-wf</span><span class="chip-state">✓</span></div><div class="chip-det">MCP handshake OK, 8 tools</div><div class="chip-kind">probe: connect</div></div><div class="chip warn" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">gemini-notebook-mcp</span><span class="chip-state">!</span></div><div class="chip-det">MCP handshake OK, 53 tools; real call OK — 7 notebooks readable, but flaky — self-repairing auth expiry (last failure 3h ago, 4 failures in 7d)</div><div class="chip-kind">probe: functional</div></div><div class="chip ok" title="endpoint/handshake reachable — auth or behaviour NOT proven"><div class="chip-top"><span class="chip-name">pubmed</span><span class="chip-state">✓</span></div><div class="chip-det">MCP handshake OK, 11 tools</div><div class="chip-kind">probe: connect</div></div><div class="chip ok" title="endpoint/handshake reachable — auth or behaviour NOT proven"><div class="chip-top"><span class="chip-name">paper-search</span><span class="chip-state">✓</span></div><div class="chip-det">MCP handshake OK, 57 tools</div><div class="chip-kind">probe: connect</div></div></div></section><section class="layer warn"><div class="rail"><div class="rail-idx">5</div><div class="rail-name">Tool backends</div><div class="rail-sub">web extraction, browser, voice</div><div class="rail-state">! DEGRADED</div></div><div class="chips"><div class="chip ok" title="endpoint/handshake reachable — auth or behaviour NOT proven"><div class="chip-top"><span class="chip-name">Web extract</span><span class="chip-state">✓</span></div><div class="chip-det">api.firecrawl.dev reachable (HTTP 200, key present)</div><div class="chip-kind">probe: connect</div></div><div class="chip ok" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">Browser automation</span><span class="chip-state">✓</span></div><div class="chip-det">backend browser-use; Chrome 151.0.7922.34 reachable on CDP :9222</div><div class="chip-kind">probe: functional</div></div><div class="chip warn" title="local file/import check, no network involved"><div class="chip-top"><span class="chip-name">Playwright (legacy)</span><span class="chip-state">!</span></div><div class="chip-det">not installed in venv (not used by the browser-use backend)</div><div class="chip-kind">probe: local</div></div><div class="chip ok" title="configuration present; behaviour not exercised"><div class="chip-top"><span class="chip-name">Text to speech</span><span class="chip-state">✓</span></div><div class="chip-det">provider: local/built-in</div><div class="chip-kind">probe: config</div></div><div class="chip ok" title="configuration present; behaviour not exercised"><div class="chip-top"><span class="chip-name">Speech to text</span><span class="chip-state">✓</span></div><div class="chip-det">enabled, lang=en, engine=local/medium</div><div class="chip-kind">probe: config</div></div></div></section><section class="layer ok"><div class="rail"><div class="rail-idx">6</div><div class="rail-name">Memory</div><div class="rail-sub">long-term memory provider</div><div class="rail-state">✓ OK</div></div><div class="chips"><div class="chip ok" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">Honcho memory</span><span class="chip-state">✓</span></div><div class="chip-det">authenticated peers() call OK (3 peers)</div><div class="chip-kind">probe: functional</div></div></div></section><section class="layer ok"><div class="rail"><div class="rail-idx">7</div><div class="rail-name">Storage</div><div class="rail-sub">session DB, backups, capacity</div><div class="rail-state">✓ OK</div></div><div class="chips"><div class="chip ok" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">Session store</span><span class="chip-state">✓</span></div><div class="chip-det">state.db 910.2MB, quick_check OK (3.0s)</div><div class="chip-kind">probe: functional</div></div><div class="chip ok" title="local file/import check, no network involved"><div class="chip-top"><span class="chip-name">WAL sidecar</span><span class="chip-state">✓</span></div><div class="chip-det">absent (checkpointed — normal)</div><div class="chip-kind">probe: local</div></div><div class="chip ok" title="local file/import check, no network involved"><div class="chip-top"><span class="chip-name">Backups</span><span class="chip-state">✓</span></div><div class="chip-det">newest backup 9h old</div><div class="chip-kind">probe: local</div></div><div class="chip ok" title="local file/import check, no network involved"><div class="chip-top"><span class="chip-name">Disk</span><span class="chip-state">✓</span></div><div class="chip-det">44.5GB free of 146.9GB</div><div class="chip-kind">probe: local</div></div></div></section><section class="layer fail"><div class="rail"><div class="rail-idx">8</div><div class="rail-name">Scheduled jobs</div><div class="rail-sub">cron fleet, ticker, run history</div><div class="rail-state">✕ DOWN</div></div><div class="chips"><div class="chip ok" title="local file/import check, no network involved"><div class="chip-top"><span class="chip-name">Scheduler ticker</span><span class="chip-state">✓</span></div><div class="chip-det">last successful tick 39s ago</div><div class="chip-kind">probe: local</div></div><div class="chip fail" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">Job fleet</span><span class="chip-state">✕</span></div><div class="chip-det">39 enabled of 48 scheduled; 2 erroring (most recent failing run 3h ago)</div><div class="chip-kind">probe: functional</div></div><div class="chip warn" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">Run history</span><span class="chip-state">!</span></div><div class="chip-det">1000 runs recorded, 5 failed</div><div class="chip-kind">probe: functional</div></div></div></section><section class="layer ok"><div class="rail"><div class="rail-idx">9</div><div class="rail-name">Egress &amp; keepers</div><div class="rail-sub">network lanes and cookie keepers</div><div class="rail-state">✓ OK</div></div><div class="chips"><div class="chip ok" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">Direct egress</span><span class="chip-state">✓</span></div><div class="chip-det">HTTPS direct OK (proxies bypassed)</div><div class="chip-kind">probe: functional</div></div><div class="chip ok" title="local service, port or process state"><div class="chip-top"><span class="chip-name">DE de-proxy lane</span><span class="chip-state">✓</span></div><div class="chip-det">127.0.0.1:18888 open</div><div class="chip-kind">probe: process</div></div><div class="chip ok" title="local service, port or process state"><div class="chip-top"><span class="chip-name">NLM SOCKS lane</span><span class="chip-state">✓</span></div><div class="chip-det">127.0.0.1:1080 open</div><div class="chip-kind">probe: process</div></div><div class="chip ok" title="real read-only call succeeded — the module actually works"><div class="chip-top"><span class="chip-name">NotebookLM cookie keeper</span><span class="chip-state">✓</span></div><div class="chip-det">signedIn=True, last cookie dump 39s ago</div><div class="chip-kind">probe: functional</div></div></div></section></div>
+
+  <h2>How to read this</h2>
+  <div class="legend">
+    <div class="lgs"><span class="lg"><i class="sw ok"></i>OK</span><span class="lg"><i class="sw warn"></i>DEGRADED</span><span class="lg"><i class="sw fail"></i>DOWN</span><span class="lg"><i class="sw unknown"></i>UNKNOWN</span></div>
+    <ul class="kinds"><li><code>functional</code> — real read-only call succeeded — the module actually works</li><li><code>connect</code> — endpoint/handshake reachable — auth or behaviour NOT proven</li><li><code>process</code> — local service, port or process state</li><li><code>local</code> — local file/import check, no network involved</li><li><code>config</code> — configuration present; behaviour not exercised</li></ul>
+    <p style="color:var(--dim);font-size:12.5px;margin:12px 0 0">
+      <b style="color:var(--fg)">Colour = state; the probe tag = the strength of the evidence.</b>
+      A module can only be called OK on evidence matching the claim: a server that
+      handshakes but fails its real call is reported DOWN, not OK.
+    </p>
+  </div>
+
+  <footer>
+    Read-only probe run (<code>envmap_probe.py</code>) → this page
+    (<code>envmap_render.py</code>). No credentials, channel identifiers or payload
+    contents are included. Private detail (cron job names and similar) is withheld from this page.
+  </footer>
+</div>
+</body>
+</html>
